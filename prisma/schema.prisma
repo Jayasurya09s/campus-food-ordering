@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  role     String   @default("customer")
+
+  cart     Cart?
+  orders   Order[]
+}
+
+model FoodItem {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  available   Boolean  @default(true)
+
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  user      User       @relation(fields: [userId], references: [id])
+
+  cartItems CartItem[]
+}
+
+model CartItem {
+  id         Int      @id @default(autoincrement())
+  cartId     Int
+  foodItemId Int
+  quantity   Int
+
+  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id])
+}
+
+model Order {
+  id           Int         @id @default(autoincrement())
+  userId       Int
+  totalAmount  Float
+  status       String      @default("Pending")
+  createdAt    DateTime    @default(now())
+
+  user          User        @relation(fields: [userId], references: [id])
+  orderItems    OrderItem[]
+}
+
+model OrderItem {
+  id          Int       @id @default(autoincrement())
+  orderId     Int
+  foodItemId  Int
+  quantity    Int
+  subtotal    Float
+
+  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodItem     FoodItem   @relation(fields: [foodItemId], references: [id])
+}
