@@ -1,8 +1,40 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 const { PrismaClient } = require("@prisma/client");
+const bcrypt = require("bcrypt");
 
 const prisma = new PrismaClient();
 
 async function main() {
+  const adminPassword = await bcrypt.hash("123456", 10);
+
+  const admin = await prisma.user.upsert({
+    where: {
+      email: "admin@gmail.com"
+    },
+    update: {
+      name: "Admin",
+      role: "admin",
+      password: adminPassword
+    },
+    create: {
+      name: "Admin",
+      email: "admin@gmail.com",
+      password: adminPassword,
+      role: "admin"
+    }
+  });
+
+  await prisma.cart.upsert({
+    where: {
+      userId: admin.id
+    },
+    update: {},
+    create: {
+      userId: admin.id
+    }
+  });
+
   await prisma.foodItem.createMany({
     data: [
       {

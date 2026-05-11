@@ -8,64 +8,120 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  name     String
-  email    String   @unique
-  password String
-  role     String   @default("customer")
+  id          Int        @id @default(autoincrement())
+  name        String
+  email       String     @unique
+  password    String
+  role        String     @default("customer")
+  createdAt   DateTime   @default(now())
 
-  cart     Cart?
-  orders   Order[]
+  cart        Cart?
+  orders      Order[]
+
+  @@map("users")
 }
 
 model FoodItem {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  price       Float
-  imageUrl    String?
-  available   Boolean  @default(true)
+  id            Int          @id @default(autoincrement())
+  name          String
+  description   String?
+  price         Float
+  imageUrl      String?
+  available     Boolean      @default(true)
 
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  createdAt     DateTime     @default(now())
+
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+
+  @@map("food_items")
 }
 
 model Cart {
-  id        Int        @id @default(autoincrement())
-  userId    Int        @unique
-  user      User       @relation(fields: [userId], references: [id])
+  id            Int          @id @default(autoincrement())
 
-  cartItems CartItem[]
+  userId        Int          @unique
+  user          User         @relation(fields: [userId], references: [id])
+
+  cartItems     CartItem[]
+
+  createdAt     DateTime     @default(now())
+
+  @@map("cart")
 }
 
 model CartItem {
-  id         Int      @id @default(autoincrement())
-  cartId     Int
-  foodItemId Int
-  quantity   Int
+  id            Int          @id @default(autoincrement())
 
-  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  foodItem   FoodItem @relation(fields: [foodItemId], references: [id])
+  cartId        Int
+  foodItemId    Int
+  quantity      Int          @default(1)
+
+  cart          Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  foodItem      FoodItem     @relation(fields: [foodItemId], references: [id])
+
+  createdAt     DateTime     @default(now())
+
+  @@map("cart_items")
 }
 
 model Order {
-  id           Int         @id @default(autoincrement())
-  userId       Int
-  totalAmount  Float
-  status       String      @default("Pending")
-  createdAt    DateTime    @default(now())
+  id              Int            @id @default(autoincrement())
 
-  user          User        @relation(fields: [userId], references: [id])
-  orderItems    OrderItem[]
+  userId          Int
+  totalAmount     Float
+
+  status          String         @default("Pending")
+
+  paymentStatus   String         @default("Pending")
+
+  createdAt       DateTime       @default(now())
+
+  user            User           @relation(fields: [userId], references: [id])
+
+  orderItems      OrderItem[]
+
+  payment         Payment?
+
+  @@map("orders")
 }
 
 model OrderItem {
-  id          Int       @id @default(autoincrement())
-  orderId     Int
-  foodItemId  Int
-  quantity    Int
-  subtotal    Float
+  id              Int            @id @default(autoincrement())
 
-  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  foodItem     FoodItem   @relation(fields: [foodItemId], references: [id])
+  orderId         Int
+  foodItemId      Int
+
+  quantity        Int
+
+  subtotal        Float
+
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  foodItem        FoodItem       @relation(fields: [foodItemId], references: [id])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id                    Int        @id @default(autoincrement())
+
+  orderId               Int        @unique
+
+  razorpayOrderId       String?
+
+  razorpayPaymentId     String?
+
+  razorpaySignature     String?
+
+  amount                Float
+
+  status                String     @default("Pending")
+
+  createdAt             DateTime   @default(now())
+
+  order                 Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
 }

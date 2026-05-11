@@ -1,94 +1,34 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { useState } from "react";
+import AdminFoodManager from "@/components/AdminFoodManager";
+import { getAppSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
-export default function AdminPage() {
-  const [name, setName] = useState("");
-  const [description, setDescription] =
-    useState("");
-  const [price, setPrice] = useState("");
-  const [imageUrl, setImageUrl] =
-    useState("");
+export default async function AdminPage() {
+  const session = await getAppSession();
 
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
+  if (!session?.user) {
+    redirect("/login");
+  }
 
-    await fetch("/api/food", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name,
-        description,
-        price,
-        imageUrl
-      })
-    });
+  if (session.user.role !== "admin") {
+    redirect("/menu");
+  }
 
-    alert("Food Item Added");
+  const foods = await prisma.foodItem.findMany({
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
 
-    setName("");
-    setDescription("");
-    setPrice("");
-    setImageUrl("");
-  };
+  const initialFoods = foods.map((food) => ({
+    id: food.id,
+    name: food.name,
+    description: food.description,
+    price: food.price,
+    imageUrl: food.imageUrl,
+    available: food.available
+  }));
 
-  return (
-    <div className="p-10 max-w-lg mx-auto">
-      <h1 className="text-3xl font-bold mb-6">
-        Admin Panel
-      </h1>
-
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4"
-      >
-        <input
-          type="text"
-          placeholder="Food Name"
-          value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-          className="border p-3 rounded"
-        />
-
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) =>
-            setDescription(e.target.value)
-          }
-          className="border p-3 rounded"
-        />
-
-        <input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) =>
-            setPrice(e.target.value)
-          }
-          className="border p-3 rounded"
-        />
-
-        <input
-          type="text"
-          placeholder="Image URL"
-          value={imageUrl}
-          onChange={(e) =>
-            setImageUrl(e.target.value)
-          }
-          className="border p-3 rounded"
-        />
-
-        <button className="bg-black text-white p-3 rounded">
-          Add Food
-        </button>
-      </form>
-    </div>
-  );
+  return <AdminFoodManager initialFoods={initialFoods} />;
 }

@@ -1,6 +1,19 @@
+import { redirect } from "next/navigation";
+
+import AdminOrdersManager from "@/components/AdminOrdersManager";
+import { getAppSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminOrdersPage() {
+  const session = await getAppSession();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  if (session.user.role !== "admin") {
+    redirect("/menu");
+  }
 
   const orders = await prisma.order.findMany({
     include: {
@@ -11,45 +24,17 @@ export default async function AdminOrdersPage() {
     }
   });
 
-  return (
-    <div className="p-10">
+  const initialOrders = orders.map((order) => ({
+    id: order.id,
+    totalAmount: order.totalAmount,
+    status: order.status,
+    paymentStatus: order.paymentStatus,
+    createdAt: order.createdAt.toISOString(),
+    user: {
+      name: order.user.name,
+      email: order.user.email
+    }
+  }));
 
-      <h1 className="text-3xl font-bold mb-6">
-        All Orders
-      </h1>
-
-      <div className="space-y-4">
-
-        {orders.map((order) => (
-
-          <div
-            key={order.id}
-            className="border p-4 rounded"
-          >
-            <h2 className="text-xl font-semibold">
-              Order #{order.id}
-            </h2>
-
-            <p>
-              Customer:
-              {" "}
-              {order.user.name}
-            </p>
-
-            <p>
-              Amount:
-              {" "}
-              ₹{order.totalAmount}
-            </p>
-
-            <p>
-              Status:
-              {" "}
-              {order.status}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <AdminOrdersManager initialOrders={initialOrders} />;
 }

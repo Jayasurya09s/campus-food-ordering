@@ -1,12 +1,23 @@
 import { prisma } from "@/lib/prisma";
+import { getAppSession } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
+    const session = await getAppSession();
+
+    if (!session?.user) {
+      return NextResponse.json(
+        {
+          error: "Unauthorized"
+        },
+        { status: 401 }
+      );
+    }
 
     const cart = await prisma.cart.findUnique({
       where: {
-        userId: 1
+        userId: Number(session.user.id)
       },
       include: {
         cartItems: {
@@ -18,9 +29,12 @@ export async function POST() {
     });
 
     if (!cart || cart.cartItems.length === 0) {
-      return NextResponse.json({
-        error: "Cart is empty"
-      });
+      return NextResponse.json(
+        {
+          error: "Cart is empty"
+        },
+        { status: 400 }
+      );
     }
 
     let total = 0;
@@ -32,7 +46,7 @@ export async function POST() {
 
     const order = await prisma.order.create({
       data: {
-        userId: 1,
+        userId: Number(session.user.id),
         totalAmount: total,
         status: "Pending"
       }
