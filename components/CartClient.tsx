@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Trash2, Plus, Minus, ShoppingCart, ArrowLeft, AlertCircle } from "lucide-react";
 import { staggerContainer, itemVariants } from "@/lib/animations";
+import RouteAutoRefresh from "@/components/RouteAutoRefresh";
 
 type FoodItem = {
   id: number;
@@ -184,6 +185,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
   if (!cart || cart.cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-hero py-20 px-4">
+        <RouteAutoRefresh intervalMs={10000} />
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
@@ -212,6 +214,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
 
   return (
     <div className="min-h-screen bg-gradient-hero py-8 px-4">
+      <RouteAutoRefresh intervalMs={10000} />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div

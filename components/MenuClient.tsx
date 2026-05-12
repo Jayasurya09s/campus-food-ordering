@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, Star, ShoppingCart, CheckCircle2, AlertCircle } from "lucide-react";
 import { staggerContainer, itemVariants } from "@/lib/animations";
+import RouteAutoRefresh from "@/components/RouteAutoRefresh";
 
 type FoodItem = {
   id: number;
@@ -79,6 +80,7 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
 
   return (
     <div className="min-h-screen bg-gradient-hero py-8 px-4">
+      <RouteAutoRefresh intervalMs={10000} />
       <AnimatePresence>
         {notification && (
           <motion.div

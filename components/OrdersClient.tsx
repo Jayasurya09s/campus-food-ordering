@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Clock, DollarSign, ArrowLeft, Package } from "lucide-react";
 import { staggerContainer, itemVariants } from "@/lib/animations";
+import RouteAutoRefresh from "@/components/RouteAutoRefresh";
 
 interface FoodItem {
   id: number;
@@ -43,6 +44,7 @@ export default function OrdersClient({ orders }: OrdersClientProps) {
   if (orders.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-hero py-20 px-4">
+        <RouteAutoRefresh intervalMs={10000} />
         <div className="max-w-6xl mx-auto">
           <Link href="/menu" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 mb-8 w-fit">
             <ArrowLeft className="w-5 h-5" />
@@ -70,6 +72,7 @@ export default function OrdersClient({ orders }: OrdersClientProps) {
 
   return (
     <div className="min-h-screen bg-gradient-hero py-8 px-4">
+      <RouteAutoRefresh intervalMs={10000} />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
