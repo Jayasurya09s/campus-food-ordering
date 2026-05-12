@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Plus, Trash2, ToggleLeft, ToggleRight, ArrowLeft, AlertCircle } from "lucide-react";
 import { staggerContainer, itemVariants } from "@/lib/animations";
+import { useRealtimeFood } from "@/lib/useRealtimeFood";
 
 type FoodItem = {
   id: number;
@@ -24,7 +25,6 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [foods, setFoods] = useState<FoodItem[]>(initialFoods);
   const [loading, setLoading] = useState(false);
   const [deletingFoodId, setDeletingFoodId] = useState<number | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
@@ -32,16 +32,11 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const [showForm, setShowForm] = useState(false);
 
-  async function fetchFoods() {
-    try {
-      const res = await fetch("/api/food?includeUnavailable=1");
-      const data = await res.json().catch(() => null);
-      if (res.ok && Array.isArray(data)) setFoods(data);
-    } catch (err) {
-      setMessage("Unable to load foods");
-      setMessageType("error");
-    }
-  }
+  // Use real-time hook for automatic menu updates
+  const { foods, refreshFoods } = useRealtimeFood(initialFoods, { 
+    pollIntervalMs: 2000, // Poll every 2 seconds for fast updates
+    includeUnavailable: true // Admins see all items including unavailable
+  });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,7 +74,8 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
         setPrice("");
         setImageUrl("");
         setShowForm(false);
-        await fetchFoods();
+        // Real-time hook will automatically sync
+        refreshFoods();
       }
     } finally {
       setLoading(false);
@@ -107,12 +103,10 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
         return;
       }
 
-      setFoods((prev) =>
-        prev.map((food) => (food.id === id ? { ...food, available: !available } : food))
-      );
-
       setMessage("✓ Availability updated");
       setMessageType("success");
+      // Real-time hook will automatically sync
+      refreshFoods();
     } catch (err) {
       setMessage("Unable to update availability");
       setMessageType("error");
@@ -140,10 +134,11 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
         return;
       }
 
-      setFoods((prev) => prev.filter((food) => food.id !== id));
       setMessage("✓ Food item deleted");
       setMessageType("success");
       setDeletingFoodId(null);
+      // Real-time hook will automatically sync
+      refreshFoods();
     } catch (err) {
       setMessage("Unable to remove food item");
       setMessageType("error");

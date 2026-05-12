@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, Star, ShoppingCart, CheckCircle2, AlertCircle } from "lucide-react";
 import { staggerContainer, itemVariants } from "@/lib/animations";
-import RouteAutoRefresh from "@/components/RouteAutoRefresh";
+import { useRealtimeFood } from "@/lib/useRealtimeFood";
 
 type FoodItem = {
   id: number;
@@ -29,6 +29,12 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  
+  // Use real-time hook for automatic menu updates
+  const { foods } = useRealtimeFood(initialFoods, { 
+    pollIntervalMs: 2000, // Poll every 2 seconds for fast updates
+    includeUnavailable: false // Only show available items to customers
+  });
 
   useEffect(() => {
     if (!notification) return;
@@ -37,7 +43,7 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
   }, [notification]);
 
   const filteredFoods = useMemo(() => {
-    const filtered = initialFoods.filter((food) =>
+    const filtered = foods.filter((food) =>
       food.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -54,7 +60,7 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
     }
 
     return filtered;
-  }, [searchQuery, sortBy, initialFoods]);
+  }, [searchQuery, sortBy, foods]);
 
   const addToCart = async (foodId: number) => {
     try {
@@ -80,7 +86,6 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
 
   return (
     <div className="min-h-screen bg-gradient-hero py-8 px-4">
-      <RouteAutoRefresh intervalMs={10000} />
       <AnimatePresence>
         {notification && (
           <motion.div
