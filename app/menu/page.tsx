@@ -18,6 +18,7 @@ export default async function MenuPage() {
     price: food.price,
     category: null,
     available: food.available,
+    imageUrl: food.imageUrl,
   }));
 
   return <MenuClient initialFoods={initialFoods} />;

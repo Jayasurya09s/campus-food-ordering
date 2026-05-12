@@ -4,8 +4,13 @@ import { Providers } from "@/components/providers";
 import Script from "next/script";
 
 export const metadata = {
-  title: "Campus Food Ordering System",
+  title: "Meghana Food",
   description: "Modern food ordering platform with real-time tracking and payments",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -18,6 +23,7 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#ff9500" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" href="/logo.png" />
       </head>
       <body>
         <Providers>

@@ -59,7 +59,7 @@ export default function RegisterPage() {
       >
         <div className='text-center mb-8'>
           <h1 className='text-3xl font-bold mb-2'>Create Account</h1>
-          <p className='text-gray-400'>Join us for delicious campus food</p>
+          <p className='text-gray-400'>Join Meghana Food for delicious campus meals</p>
         </div>
 
         <motion.div
@@ -69,68 +69,68 @@ export default function RegisterPage() {
           className='bg-zinc-900 p-8 rounded-2xl border border-zinc-800 shadow-xl'
         >
           <form onSubmit={handleRegister} className='space-y-6'>
-            <div>
-              <label className='block text-sm font-medium text-gray-400 mb-2'>Full Name</label>
-              <div className='relative'>
-                <User className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500' />
-                <input
-                  type='text'
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className='w-full bg-black border border-zinc-800 rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all'
-                  placeholder='John Doe'
-                  required
-                />
+              <div>
+                <label className='block text-sm font-medium text-gray-400 mb-2'>Full Name</label>
+                <div className='relative'>
+                  <User className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500' />
+                  <input
+                    type='text'
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className='w-full bg-black border border-zinc-800 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all'
+                    placeholder='     John Doe'
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className='block text-sm font-medium text-gray-400 mb-2'>Email Address</label>
-              <div className='relative'>
-                <Mail className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500' />
-                <input
-                  type='email'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className='w-full bg-black border border-zinc-800 rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all'
-                  placeholder='john@example.com'
-                  required
-                />
+              <div>
+                <label className='block text-sm font-medium text-gray-400 mb-2'>Email Address</label>
+                <div className='relative'>
+                  <Mail className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500' />
+                  <input
+                    type='email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className='w-full bg-black border border-zinc-800 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all'
+                    placeholder='     john@example.com'
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className='block text-sm font-medium text-gray-400 mb-2'>Password</label>
-              <div className='relative'>
-                <Lock className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500' />
-                <input
-                  type='password'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className='w-full bg-black border border-zinc-800 rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all'
-                  placeholder='••••••••'
-                  required
-                />
+              <div>
+                <label className='block text-sm font-medium text-gray-400 mb-2'>Password</label>
+                <div className='relative'>
+                  <Lock className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500' />
+                  <input
+                    type='password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className='w-full bg-black border border-zinc-800 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all'
+                    placeholder='     ••••••••'
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className='block text-sm font-medium text-gray-400 mb-2'>Confirm Password</label>
-              <div className='relative'>
-                <Lock className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500' />
-                <input
-                  type='password'
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className='w-full bg-black border border-zinc-800 rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all'
-                  placeholder='••••••••'
-                  required
-                />
+              <div>
+                <label className='block text-sm font-medium text-gray-400 mb-2'>Confirm Password</label>
+                <div className='relative'>
+                  <Lock className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500' />
+                  <input
+                    type='password'
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className='w-full bg-black border border-zinc-800 rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all'
+                    placeholder='     ••••••••'
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
             {message && (
-                <div className="p-4 rounded-xl flex items-center gap-3 bg-red-500/10 border border-red-500/20 text-red-400">
+                <div className={`p-4 rounded-xl flex items-center gap-3 ${success ? 'bg-green-500/10 border border-green-500/20 text-green-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'}`}>
                 {success ? <CheckCircle className='w-5 h-5' /> : <AlertCircle className='w-5 h-5' />}
                 <p className='text-sm font-medium'>{message}</p>
               </div>

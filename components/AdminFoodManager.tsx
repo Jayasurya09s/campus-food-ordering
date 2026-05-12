@@ -23,18 +23,24 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("Pizza");
+  const [imageUrl, setImageUrl] = useState("");
   const [foods, setFoods] = useState<FoodItem[]>(initialFoods);
   const [loading, setLoading] = useState(false);
   const [deletingFoodId, setDeletingFoodId] = useState<number | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const [showForm, setShowForm] = useState(false);
 
   async function fetchFoods() {
-    const res = await fetch("/api/food?includeUnavailable=1");
-    const data = await res.json();
-    setFoods(data);
+    try {
+      const res = await fetch("/api/food?includeUnavailable=1");
+      const data = await res.json().catch(() => null);
+      if (res.ok && Array.isArray(data)) setFoods(data);
+    } catch (err) {
+      setMessage("Unable to load foods");
+      setMessageType("error");
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -52,14 +58,18 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
           name,
           description,
           price: parseFloat(price),
-          category,
+          imageUrl,
         }),
       });
-
-      const data = await res.json();
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = null;
+      }
 
       if (!res.ok) {
-        setMessage(data.error || "Unable to add food item");
+        setMessage((data && data.error) || "Unable to add food item");
         setMessageType("error");
       } else {
         setMessage("✓ Food item added successfully");
@@ -67,7 +77,7 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
         setName("");
         setDescription("");
         setPrice("");
-        setCategory("Pizza");
+        setImageUrl("");
         setShowForm(false);
         await fetchFoods();
       }
@@ -77,61 +87,107 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
   }
 
   async function toggleAvailability(id: number, available: boolean) {
-    const res = await fetch("/api/food", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id,
-        available: !available,
-      }),
-    });
+    try {
+      const res = await fetch("/api/food", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          available: !available,
+        }),
+      });
 
-    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        setMessage((data && data.error) || "Unable to update availability");
+        setMessageType("error");
+        return;
+      }
+
+      setFoods((prev) =>
+        prev.map((food) => (food.id === id ? { ...food, available: !available } : food))
+      );
+
+      setMessage("✓ Availability updated");
+      setMessageType("success");
+    } catch (err) {
       setMessage("Unable to update availability");
       setMessageType("error");
-      return;
     }
-
-    setFoods((prev) =>
-      prev.map((food) => (food.id === id ? { ...food, available: !available } : food))
-    );
-
-    setMessage("✓ Availability updated");
-    setMessageType("success");
   }
 
   async function removeFood(id: number) {
-    if (!confirm("Are you sure you want to delete this food item?")) return;
-
     setDeletingFoodId(id);
 
-    const res = await fetch("/api/food", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
-    });
+    try {
+      const res = await fetch("/api/food", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
 
-    const data = await res.json();
+      const data = await res.json().catch(() => null);
 
-    if (!res.ok) {
-      setMessage(data.error || "Unable to remove food item");
+      if (!res.ok) {
+        setMessage((data && data.error) || "Unable to remove food item");
+        setMessageType("error");
+        setDeletingFoodId(null);
+        return;
+      }
+
+      setFoods((prev) => prev.filter((food) => food.id !== id));
+      setMessage("✓ Food item deleted");
+      setMessageType("success");
+      setDeletingFoodId(null);
+    } catch (err) {
+      setMessage("Unable to remove food item");
       setMessageType("error");
       setDeletingFoodId(null);
-      return;
     }
-
-    setFoods((prev) => prev.filter((food) => food.id !== id));
-    setMessage("✓ Food item deleted");
-    setMessageType("success");
-    setDeletingFoodId(null);
   }
 
   return (
     <div className="min-h-screen bg-gradient-hero py-8 px-4">
+      {pendingDeleteId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md bg-zinc-900 border border-zinc-700 rounded-2xl p-6"
+          >
+            <h3 className="text-xl font-semibold text-white">Delete food item?</h3>
+            <p className="text-gray-400 mt-2 text-sm">
+              This will remove the item from menu and related cart/order line items.
+            </p>
+
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setPendingDeleteId(null)}
+                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white smooth-transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const id = pendingDeleteId;
+                  setPendingDeleteId(null);
+                  if (id !== null) await removeFood(id);
+                }}
+                className="px-4 py-2 rounded-lg bg-red-500/80 hover:bg-red-500 text-white smooth-transition"
+              >
+                Delete
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -207,6 +263,19 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
 
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Image URL
+                    </label>
+                    <input
+                      type="url"
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      placeholder="https://..."
+                      className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:border-orange-500 focus:bg-white/20 smooth-transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
                       Price (₹) *
                     </label>
                     <input
@@ -217,23 +286,6 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
                       className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:border-orange-500 focus:bg-white/20 smooth-transition"
                       required
                     />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Category
-                    </label>
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white focus:border-orange-500 focus:bg-white/20 smooth-transition"
-                    >
-                      <option value="Pizza">Pizza</option>
-                      <option value="Burgers">Burgers</option>
-                      <option value="Pasta">Pasta</option>
-                      <option value="Sandwiches">Sandwiches</option>
-                      <option value="Beverages">Beverages</option>
-                    </select>
                   </div>
 
                   <button
@@ -298,8 +350,16 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
                       </div>
                     </div>
 
-                    <div className="mb-4 p-4 rounded-lg bg-linear-to-br from-white/10 to-white/5 text-center text-4xl">
-                      🍽️
+                    <div className="mb-4 p-4 rounded-lg bg-linear-to-br from-white/10 to-white/5 text-center overflow-hidden">
+                      {food.imageUrl ? (
+                        <img
+                          src={food.imageUrl}
+                          alt={food.name}
+                          className="h-40 w-full object-cover rounded-md"
+                        />
+                      ) : (
+                        <div className="text-4xl py-12">🍽️</div>
+                      )}
                     </div>
 
                     <div className="mb-4 flex items-center justify-between">
@@ -325,7 +385,7 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
                       </button>
 
                       <button
-                        onClick={() => removeFood(food.id)}
+                        onClick={() => setPendingDeleteId(food.id)}
                         disabled={deletingFoodId === food.id}
                         className="w-full flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-red-500/10 text-red-400 smooth-transition disabled:opacity-50"
                       >

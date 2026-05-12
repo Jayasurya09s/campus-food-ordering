@@ -50,7 +50,7 @@ export default function OrderSuccessPage() {
 
     const content = `
 ╔════════════════════════════════════════════════════════╗
-║            CAMPUS FOOD ORDER RECEIPT                   ║
+║            MEGHANA FOOD ORDER RECEIPT                  ║
 ╚════════════════════════════════════════════════════════╝
 
 CUSTOMER DETAILS:

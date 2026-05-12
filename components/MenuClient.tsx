@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Search, Star, ShoppingCart } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Search, Star, ShoppingCart, CheckCircle2, AlertCircle } from "lucide-react";
 import { staggerContainer, itemVariants } from "@/lib/animations";
 
 type FoodItem = {
@@ -13,6 +13,7 @@ type FoodItem = {
   price: number;
   category: string | null;
   available: boolean;
+  imageUrl?: string | null;
   rating?: number;
 };
 
@@ -22,16 +23,21 @@ type MenuClientProps = {
 
 export default function MenuClient({ initialFoods }: MenuClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("popularity");
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
-  const categories = ["All", "Pizza", "Burgers", "Pasta", "Sandwiches", "Beverages"];
+  useEffect(() => {
+    if (!notification) return;
+    const timer = setTimeout(() => setNotification(null), 2500);
+    return () => clearTimeout(timer);
+  }, [notification]);
 
   const filteredFoods = useMemo(() => {
-    const filtered = initialFoods.filter(
-      (food) =>
-        (selectedCategory === "All" || food.category === selectedCategory) &&
-        food.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filtered = initialFoods.filter((food) =>
+      food.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     if (sortBy === "price-low") {
@@ -47,7 +53,7 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
     }
 
     return filtered;
-  }, [searchQuery, selectedCategory, sortBy, initialFoods]);
+  }, [searchQuery, sortBy, initialFoods]);
 
   const addToCart = async (foodId: number) => {
     try {
@@ -58,21 +64,42 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
       });
 
       if (res.ok) {
-        alert("Added to cart!");
+        setNotification({ type: "success", text: "Added to cart" });
       } else if (res.status === 401) {
         window.location.assign("/login");
       } else {
         const data = await res.json();
-        alert(data.error || "Unable to add to cart");
+        setNotification({ type: "error", text: data.error || "Unable to add to cart" });
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
-      alert("Error adding to cart");
+      setNotification({ type: "error", text: "Error adding to cart" });
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-hero py-8 px-4">
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            className={`fixed top-24 right-4 z-50 px-4 py-3 rounded-xl border shadow-lg backdrop-blur-md flex items-center gap-2 ${
+              notification.type === "success"
+                ? "bg-green-500/15 border-green-500/30 text-green-300"
+                : "bg-red-500/15 border-red-500/30 text-red-300"
+            }`}
+          >
+            {notification.type === "success" ? (
+              <CheckCircle2 className="w-4 h-4" />
+            ) : (
+              <AlertCircle className="w-4 h-4" />
+            )}
+            <span className="text-sm font-medium">{notification.text}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -98,7 +125,7 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
                 type="text"
-                placeholder="Search foods..."
+                placeholder="     Search foods..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:border-orange-500 focus:bg-white/20 smooth-transition"
@@ -120,27 +147,7 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
           </motion.div>
         </motion.div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="flex gap-2 mb-8 overflow-x-auto pb-2"
-        >
-          {categories.map((cat) => (
-            <motion.button
-              key={cat}
-              variants={itemVariants}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-6 py-3 rounded-full font-semibold whitespace-nowrap smooth-transition ${
-                selectedCategory === cat
-                  ? "btn-primary"
-                  : "bg-white/10 border border-white/20 text-white hover:border-orange-500/50 hover:bg-white/20"
-              }`}
-            >
-              {cat}
-            </motion.button>
-          ))}
-        </motion.div>
+        {/* category filters removed per request */}
 
         {filteredFoods.length > 0 ? (
           <motion.div
@@ -156,7 +163,15 @@ export default function MenuClient({ initialFoods }: MenuClientProps) {
                 className="group card-hover bg-white/5 border border-white/10 hover:border-orange-500/50 rounded-2xl overflow-hidden flex flex-col"
               >
                 <div className="aspect-square bg-linear-to-br from-white/10 to-white/5 flex items-center justify-center relative overflow-hidden">
-                  <div className="text-6xl group-hover:scale-110 smooth-transition">🍽️</div>
+                  {food.imageUrl ? (
+                    <img
+                      src={food.imageUrl}
+                      alt={food.name}
+                      className="w-full h-full object-cover group-hover:scale-110 smooth-transition"
+                    />
+                  ) : (
+                    <div className="text-6xl group-hover:scale-110 smooth-transition">🍽️</div>
+                  )}
                   {!food.available && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                       <span className="badge badge-error">Out of Stock</span>

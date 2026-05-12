@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
@@ -42,11 +43,18 @@ export default function Navbar() {
                 className="flex items-center gap-2 group"
                 onClick={() => setMobileOpen(false)}
               >
-                <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center group-hover:scale-110 smooth-transition">
-                  <span className="text-xl font-bold text-white">🍕</span>
+                <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10 border border-white/10 group-hover:scale-110 smooth-transition">
+                  <Image
+                    src="/logo.png"
+                    alt="Meghana Food logo"
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                    priority
+                  />
                 </div>
                 <div className="hidden sm:block">
-                  <div className="font-bold text-lg gradient-text">Campus Food</div>
+                  <div className="font-bold text-lg gradient-text">Meghana Food</div>
                   <div className="text-xs text-gray-400 -mt-1">Order Smart</div>
                 </div>
               </Link>
@@ -91,18 +99,7 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg hover:bg-white/5 smooth-transition"
-                aria-label="Toggle theme"
-              >
-                {theme === "dark" ? (
-                  <Sun className="w-5 h-5 text-amber-500" />
-                ) : (
-                  <Moon className="w-5 h-5 text-gray-400" />
-                )}
-              </button>
+             
 
               {/* Auth Buttons */}
               <div className="hidden sm:flex items-center gap-2">

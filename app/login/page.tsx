@@ -66,7 +66,7 @@ export default function LoginPage() {
               <span className="gradient-text">Back</span>
             </h1>
             <p className="text-xl text-gray-300">
-              Order delicious food from your favorite campus vendors
+              Order delicious food from Meghana Food
             </p>
           </div>
 
@@ -139,7 +139,7 @@ export default function LoginPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
+                      placeholder="     you@example.com"
                       className="w-full pl-12 pr-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:border-orange-500 focus:bg-white/20 smooth-transition"
                       required
                     />
@@ -157,7 +157,7 @@ export default function LoginPage() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder="     ••••••••"
                       className="w-full pl-12 pr-12 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 focus:border-orange-500 focus:bg-white/20 smooth-transition"
                       required
                     />
@@ -187,60 +187,10 @@ export default function LoginPage() {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-white/10"></div>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-[#1a1a2e] text-gray-400">Demo Access</span>
-                </div>
+                
               </div>
 
-              {/* Admin Demo Section */}
-              <div className="space-y-4 p-5 rounded-xl bg-linear-to-br from-orange-500/10 to-purple-500/10 border border-orange-500/20">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-lg">👨‍💼</span>
-                  <h3 className="font-semibold text-white">Admin Demo Credentials</h3>
-                </div>
-
-                <div className="space-y-3">
-                  {/* Email Display */}
-                  <div>
-                    <p className="text-xs font-semibold text-gray-400 mb-1">EMAIL</p>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10 group hover:border-orange-500/50 smooth-transition">
-                      <code className="text-sm text-white font-mono">{ADMIN_EMAIL}</code>
-                      <button
-                        type="button"
-                        onClick={() => setEmail(ADMIN_EMAIL)}
-                        className="text-xs text-orange-400 hover:text-orange-300 smooth-transition font-medium"
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Password Display */}
-                  <div>
-                    <p className="text-xs font-semibold text-gray-400 mb-1">PASSWORD</p>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10 group hover:border-orange-500/50 smooth-transition">
-                      <code className="text-sm text-white font-mono">{ADMIN_PASSWORD}</code>
-                      <button
-                        type="button"
-                        onClick={() => setPassword(ADMIN_PASSWORD)}
-                        className="text-xs text-orange-400 hover:text-orange-300 smooth-transition font-medium"
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Fill Button */}
-                <button
-                  type="button"
-                  onClick={fillAdminCredentials}
-                  className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-medium text-sm smooth-transition flex items-center justify-center gap-2"
-                >
-                  <LogIn className="w-4 h-4" />
-                  Login as Admin
-                </button>
-              </div>
+             
 
               {/* Sign Up Link */}
               <p className="text-center text-gray-400">

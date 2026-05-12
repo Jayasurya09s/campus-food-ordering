@@ -62,7 +62,7 @@ export default function HomePage() {
             >
               <motion.div variants={itemVariants} className="space-y-4">
                 <div className="inline-block px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur">
-                  <span className="text-sm font-medium text-orange-400">🚀 Welcome to Campus Food</span>
+                  <span className="text-sm font-medium text-orange-400"> Welcome to Meghana Food</span>
                 </div>
 
                 <h1 className="text-5xl md:text-7xl font-bold leading-tight">
@@ -304,7 +304,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h3 className="font-bold text-white mb-4">Campus Food</h3>
+              <h3 className="font-bold text-white mb-4">Meghana Food</h3>
               <p className="text-gray-400 text-sm">Modern food ordering platform for campus students</p>
             </div>
             <div>
@@ -325,13 +325,13 @@ export default function HomePage() {
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Contact</h4>
-              <p className="text-gray-400 text-sm">support@campusfood.com</p>
+              <p className="text-gray-400 text-sm">support@meghanafood.com</p>
               <p className="text-gray-400 text-sm">+91 9876543210</p>
             </div>
           </div>
 
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between">
-            <p className="text-gray-400 text-sm">&copy; 2024 Campus Food. All rights reserved.</p>
+            <p className="text-gray-400 text-sm">&copy; 2024 Meghana Food. All rights reserved.</p>
             <div className="flex gap-4 mt-4 md:mt-0">
               <a href="#" className="text-gray-400 hover:text-white text-sm smooth-transition">Privacy</a>
               <a href="#" className="text-gray-400 hover:text-white text-sm smooth-transition">Terms</a>

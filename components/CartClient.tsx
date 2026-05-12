@@ -132,7 +132,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
       key,
       amount: razorpayOrder.amount,
       currency: "INR",
-      name: "Campus Food",
+      name: "Meghana Food",
       description: "Food Order",
       order_id: razorpayOrder.id,
       handler: async (response) => {
@@ -254,9 +254,16 @@ export default function CartClient({ initialCart }: CartClientProps) {
                 variants={itemVariants}
                 className="card-hover bg-white/5 border border-white/10 hover:border-orange-500/50 rounded-2xl p-6 flex gap-6 items-center"
               >
-                {/* Food Image Placeholder */}
-                <div className="w-24 h-24 rounded-xl bg-linear-to-br from-white/10 to-white/5 flex items-center justify-center text-3xl shrink-0">
-                  🍽️
+                <div className="w-24 h-24 rounded-xl bg-linear-to-br from-white/10 to-white/5 overflow-hidden shrink-0 flex items-center justify-center">
+                  {item.foodItem.imageUrl ? (
+                    <img
+                      src={item.foodItem.imageUrl}
+                      alt={item.foodItem.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-3xl">🍽️</span>
+                  )}
                 </div>
 
                 {/* Food Details */}
