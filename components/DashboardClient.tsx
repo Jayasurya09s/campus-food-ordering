@@ -3,10 +3,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
-  TrendingUp,
-  Users,
-  Package,
-  DollarSign,
   ArrowUpRight,
   ArrowRight,
 } from "lucide-react";
@@ -83,7 +79,7 @@ export default function DashboardClient({
             <br />
             <span className="gradient-text">Dashboard</span>
           </h1>
-          <p className="text-gray-400 text-lg">Welcome back! Here's your business overview.</p>
+          <p className="text-gray-400 text-lg">Welcome back! Here&apos;s your business overview.</p>
         </motion.div>
 
         {/* Quick Navigation */}
@@ -119,9 +115,9 @@ export default function DashboardClient({
           animate="visible"
           className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
         >
-          {stats.map((stat, i) => (
+          {stats.map((stat) => (
             <motion.div
-              key={i}
+              key={stat.label}
               variants={itemVariants}
               className="group card-hover bg-gradient-to-br from-white/5 to-white/10 border border-white/20 rounded-2xl p-6 hover:border-orange-500/50 overflow-hidden relative"
             >

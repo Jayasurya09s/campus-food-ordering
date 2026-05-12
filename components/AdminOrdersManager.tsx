@@ -16,6 +16,11 @@ type Order = {
     name: string;
     email: string;
   };
+  orderItems?: Array<{
+    name: string;
+    quantity: number;
+    price: number;
+  }>;
 };
 
 const statusOptions = ["Pending", "Confirmed", "Preparing", "Delivered"];
@@ -105,8 +110,8 @@ export default function AdminOrdersManager({ initialOrders }: AdminOrdersManager
                 : "bg-red-500/10 border border-red-500/20 text-red-400"
             }`}
           >
-            {messageType === "error" && <AlertCircle className="w-5 h-5 flex-shrink-0" />}
-            {messageType === "success" && <CheckCircle className="w-5 h-5 flex-shrink-0" />}
+            {messageType === "error" && <AlertCircle className="w-5 h-5 shrink-0" />}
+            {messageType === "success" && <CheckCircle className="w-5 h-5 shrink-0" />}
             <p className="text-sm">{message}</p>
           </motion.div>
         )}
@@ -180,6 +185,20 @@ export default function AdminOrdersManager({ initialOrders }: AdminOrdersManager
 
                 {/* Details */}
                 <div className="mt-6 pt-6 border-t border-white/10">
+                  <div className="mb-4">
+                    <p className="text-sm font-semibold text-white mb-2">Items Ordered:</p>
+                    <div className="space-y-2">
+                      {order.orderItems?.map((item, idx) => (
+                        <div key={idx} className="text-sm text-gray-400 flex justify-between">
+                          <span>
+                            {item.name} × {item.quantity}
+                          </span>
+                          <span className="text-white">₹{item.price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="flex items-center justify-between text-sm text-gray-400">
                     <span>
                       Order Date: {new Date(order.createdAt).toLocaleDateString()} at{" "}

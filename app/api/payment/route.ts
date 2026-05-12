@@ -63,64 +63,48 @@ export async function POST() {
       );
     }
 
-    let total = 0;
+    let subtotal = 0;
 
     cart.cartItems.forEach((item) => {
-
-      total +=
-        item.foodItem.price *
-        item.quantity;
+      subtotal += item.foodItem.price * item.quantity;
     });
 
-    const order =
-      await prisma.order.create({
-        data: {
-          userId: Number(
-            session.user.id
-          ),
+    const tax = Math.round(subtotal * 0.05);
+    const delivery = 50;
+    const total = subtotal + tax + delivery;
 
-          totalAmount: total,
-
-          paymentStatus:
-            "Pending"
-        }
-      });
+    const order = await prisma.order.create({
+      data: {
+        userId: Number(session.user.id),
+        totalAmount: total,
+        paymentStatus: "Pending",
+      },
+    });
 
     for (const item of cart.cartItems) {
-
       await prisma.orderItem.create({
         data: {
           orderId: order.id,
-          foodItemId:
-            item.foodItemId,
-
-          quantity:
-            item.quantity,
-
-          subtotal:
-            item.foodItem.price *
-            item.quantity
-        }
+          foodItemId: item.foodItemId,
+          quantity: item.quantity,
+          subtotal: item.foodItem.price * item.quantity,
+        },
       });
     }
 
-    const razorpayOrder =
-      await razorpay.orders.create({
-        amount: total * 100,
-        currency: "INR",
-        receipt:
-          `order_${order.id}`
-      });
+    const razorpayOrder = await razorpay.orders.create({
+      amount: total * 100,
+      currency: "INR",
+      receipt: `order_${order.id}`,
+    });
 
     await prisma.payment.create({
       data: {
         orderId: order.id,
-        razorpayOrderId:
-          razorpayOrder.id,
-
+        razorpayOrderId: razorpayOrder.id,
         amount: total,
-        status: "Pending"
-      }
+        status: "Pending",
+      },
     });
 
     return NextResponse.json({

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Trash2, Plus, Minus, ShoppingCart, ArrowLeft, AlertCircle, CheckCircle } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingCart, ArrowLeft, AlertCircle } from "lucide-react";
 import { staggerContainer, itemVariants } from "@/lib/animations";
 
 type FoodItem = {
@@ -59,7 +59,6 @@ export default function CartClient({ initialCart }: CartClientProps) {
   const [cart, setCart] = useState<CartData | null>(initialCart);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [isPaying, setIsPaying] = useState(false);
-  const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   async function fetchCart() {
@@ -236,7 +235,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
             animate={{ opacity: 1, y: 0 }}
             className="mb-6 flex items-center gap-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400"
           >
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <AlertCircle className="w-5 h-5 shrink-0" />
             <p className="text-sm">{errorMessage}</p>
           </motion.div>
         )}
@@ -256,7 +255,7 @@ export default function CartClient({ initialCart }: CartClientProps) {
                 className="card-hover bg-white/5 border border-white/10 hover:border-orange-500/50 rounded-2xl p-6 flex gap-6 items-center"
               >
                 {/* Food Image Placeholder */}
-                <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center text-3xl flex-shrink-0">
+                <div className="w-24 h-24 rounded-xl bg-linear-to-br from-white/10 to-white/5 flex items-center justify-center text-3xl shrink-0">
                   🍽️
                 </div>
 

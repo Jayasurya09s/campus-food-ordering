@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Clock, MapPin, DollarSign, ArrowLeft, Package } from "lucide-react";
+import { Clock, DollarSign, ArrowLeft, Package } from "lucide-react";
 import { staggerContainer, itemVariants } from "@/lib/animations";
 
 interface FoodItem {
@@ -129,7 +129,7 @@ export default function OrdersClient({ orders }: OrdersClientProps) {
                   {/* Order Details Grid */}
                   <div className="grid md:grid-cols-3 gap-6 mb-6 pb-6 border-b border-white/10">
                     <div className="flex items-start gap-3">
-                      <Clock className="w-5 h-5 text-orange-400 mt-1 flex-shrink-0" />
+                      <Clock className="w-5 h-5 text-orange-400 mt-1 shrink-0" />
                       <div>
                         <p className="text-gray-400 text-sm mb-1">Order Date</p>
                         <p className="text-white font-medium">
@@ -142,7 +142,7 @@ export default function OrdersClient({ orders }: OrdersClientProps) {
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <Package className="w-5 h-5 text-orange-400 mt-1 flex-shrink-0" />
+                      <Package className="w-5 h-5 text-orange-400 mt-1 shrink-0" />
                       <div>
                         <p className="text-gray-400 text-sm mb-1">Items</p>
                         <p className="text-white font-medium">{totalItems} item(s)</p>
@@ -150,7 +150,7 @@ export default function OrdersClient({ orders }: OrdersClientProps) {
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <DollarSign className="w-5 h-5 text-orange-400 mt-1 flex-shrink-0" />
+                      <DollarSign className="w-5 h-5 text-orange-400 mt-1 shrink-0" />
                       <div>
                         <p className="text-gray-400 text-sm mb-1">Payment ID</p>
                         <p className="text-white font-mono text-sm font-medium truncate">

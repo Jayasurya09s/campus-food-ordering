@@ -162,7 +162,7 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
                 : "bg-red-500/10 border border-red-500/20 text-red-400"
             }`}
           >
-            {messageType === "error" && <AlertCircle className="w-5 h-5 flex-shrink-0" />}
+            {messageType === "error" && <AlertCircle className="w-5 h-5 shrink-0" />}
             <p className="text-sm">{message}</p>
           </motion.div>
         )}
@@ -298,7 +298,7 @@ export default function AdminFoodManager({ initialFoods }: AdminFoodManagerProps
                       </div>
                     </div>
 
-                    <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-white/10 to-white/5 text-center text-4xl">
+                    <div className="mb-4 p-4 rounded-lg bg-linear-to-br from-white/10 to-white/5 text-center text-4xl">
                       🍽️
                     </div>
 

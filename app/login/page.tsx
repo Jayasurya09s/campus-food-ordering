@@ -24,7 +24,7 @@ export default function LoginPage() {
       email,
       password,
       redirect: false,
-      callbackUrl: "/menu",
+      callbackUrl: "/orders",
     });
 
     if (result?.error) {
@@ -33,11 +33,8 @@ export default function LoginPage() {
       return;
     }
 
-    const sessionRes = await fetch("/api/auth/session");
-    const session = await sessionRes.json();
-    const role = (session?.user as { role?: string } | undefined)?.role;
-
-    window.location.href = role === "admin" ? "/admin" : "/menu";
+    // After login, go to the Orders page for both users and admins
+    window.location.href = "/orders";
   }
 
   const fillAdminCredentials = () => {
@@ -124,7 +121,7 @@ export default function LoginPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center gap-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400"
                 >
-                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                  <AlertCircle className="w-5 h-5 shrink-0" />
                   <p className="text-sm">{error}</p>
                 </motion.div>
               )}
@@ -196,7 +193,7 @@ export default function LoginPage() {
               </div>
 
               {/* Admin Demo Section */}
-              <div className="space-y-4 p-5 rounded-xl bg-gradient-to-br from-orange-500/10 to-purple-500/10 border border-orange-500/20">
+              <div className="space-y-4 p-5 rounded-xl bg-linear-to-br from-orange-500/10 to-purple-500/10 border border-orange-500/20">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-lg">👨‍💼</span>
                   <h3 className="font-semibold text-white">Admin Demo Credentials</h3>
@@ -247,7 +244,7 @@ export default function LoginPage() {
 
               {/* Sign Up Link */}
               <p className="text-center text-gray-400">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/register"
                   className="text-orange-400 font-semibold hover:text-orange-300 smooth-transition"

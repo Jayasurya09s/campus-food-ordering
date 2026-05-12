@@ -6,11 +6,13 @@ import { CheckCircle, Download, Printer, Home } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface OrderData {
-  orderId: string;
+  orderId: number;
   paymentId: string;
+  customerName: string;
+  customerEmail: string;
   totalAmount: number;
-  items: Array<{ name: string; quantity: number; price: number }>;
   createdAt: string;
+  items: Array<{ name: string; quantity: number; price: number; unitPrice: number }>;
 }
 
 export default function OrderSuccessPage() {
@@ -41,18 +43,41 @@ export default function OrderSuccessPage() {
   };
 
   const handleDownload = () => {
+    const dateTime = order?.createdAt ? new Date(order.createdAt).toLocaleString() : "N/A";
+    const itemsText = order?.items
+      .map((item) => `${item.name.padEnd(30)} x${item.quantity.toString().padStart(2)} = ₹${item.price.toString().padStart(6)}`)
+      .join("\n");
+
     const content = `
-Campus Food Order Receipt
-==========================
-Order ID: ${order?.orderId}
-Payment ID: ${order?.paymentId}
-Date: ${order?.createdAt}
-Total: ₹${order?.totalAmount}
+╔════════════════════════════════════════════════════════╗
+║            CAMPUS FOOD ORDER RECEIPT                   ║
+╚════════════════════════════════════════════════════════╝
 
-Items:
-${order?.items.map((item) => `- ${item.name} x${item.quantity} = ₹${item.price}`).join("\n")}
+CUSTOMER DETAILS:
+─────────────────────────────────────────────────────────
+Name:                    ${order?.customerName || "N/A"}
+Email:                   ${order?.customerEmail || "N/A"}
 
-Thank you for your order!
+ORDER DETAILS:
+─────────────────────────────────────────────────────────
+Order ID:                #${order?.orderId || "N/A"}
+Payment ID:              ${order?.paymentId || "N/A"}
+Date & Time:             ${dateTime}
+Status:                  Paid ✓
+
+ITEMS ORDERED:
+─────────────────────────────────────────────────────────
+${itemsText}
+
+PAYMENT SUMMARY:
+─────────────────────────────────────────────────────────
+Total Amount:            ₹${order?.totalAmount || 0}
+
+═══════════════════════════════════════════════════════════
+Thank you for your order! 
+Your food is being prepared.
+
+═══════════════════════════════════════════════════════════
     `.trim();
 
     const element = document.createElement("a");
@@ -104,28 +129,47 @@ Thank you for your order!
           transition={{ delay: 0.3 }}
           className="card-glass border border-white/20 rounded-3xl p-8 mb-8 print:border-black print:bg-white print:text-black"
         >
+          {/* Customer Details */}
+          <div className="mb-8 pb-8 border-b border-white/10 print:border-black">
+            <h2 className="text-lg font-semibold text-white mb-4 print:text-black">Customer Details</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Customer Name</p>
+                <p className="text-white print:text-black font-medium">{order?.customerName || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Email</p>
+                <p className="text-white print:text-black font-medium">{order?.customerEmail || "N/A"}</p>
+              </div>
+            </div>
+          </div>
+
           {/* Order Details */}
           <div className="space-y-6 mb-8 pb-8 border-b border-white/10 print:border-black">
-            <div>
-              <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Order Number</p>
-              <p className="text-2xl font-bold text-white print:text-black font-mono">{order?.orderId}</p>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Order Number</p>
+                <p className="text-2xl font-bold text-white print:text-black font-mono">#{order?.orderId}</p>
+              </div>
+
+              <div>
+                <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Payment ID</p>
+                <p className="text-lg text-white print:text-black font-mono">{order?.paymentId}</p>
+              </div>
             </div>
 
-            <div>
-              <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Payment ID</p>
-              <p className="text-lg text-white print:text-black font-mono">{order?.paymentId}</p>
-            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Order Date & Time</p>
+                <p className="text-white print:text-black">
+                  {order?.createdAt ? new Date(order.createdAt).toLocaleString() : "N/A"}
+                </p>
+              </div>
 
-            <div>
-              <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Order Date & Time</p>
-              <p className="text-white print:text-black">
-                {order?.createdAt ? new Date(order.createdAt).toLocaleString() : "N/A"}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Payment Status</p>
-              <span className="badge badge-success">✓ Paid</span>
+              <div>
+                <p className="text-gray-400 text-sm mb-1 print:text-gray-600">Payment Status</p>
+                <span className="badge badge-success">✓ Paid</span>
+              </div>
             </div>
           </div>
 
@@ -134,21 +178,23 @@ Thank you for your order!
             <h2 className="text-lg font-semibold text-white mb-4 print:text-black">Order Items</h2>
             <div className="space-y-3">
               {order?.items?.map((item, i) => (
-                <div key={i} className="flex justify-between items-center">
-                  <div>
+                <div key={i} className="flex justify-between items-start p-3 bg-white/5 print:bg-gray-100 rounded-lg">
+                  <div className="flex-1">
                     <p className="text-white print:text-black font-medium">{item.name}</p>
-                    <p className="text-gray-400 text-sm print:text-gray-600">Qty: {item.quantity}</p>
+                    <p className="text-gray-400 text-sm print:text-gray-600">
+                      ₹{item.unitPrice} × {item.quantity} = ₹{item.price}
+                    </p>
                   </div>
-                  <p className="text-white print:text-black font-semibold">₹{item.price}</p>
+                  <p className="text-white print:text-black font-semibold ml-4">₹{item.price}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Total */}
-          <div className="flex justify-between items-center p-4 rounded-lg bg-white/5 print:bg-gray-100">
+          <div className="flex justify-between items-center p-4 rounded-lg bg-linear-to-r from-orange-500/20 to-purple-500/20 border border-orange-500/30 print:bg-gray-100 print:border-black">
             <span className="text-lg font-semibold text-white print:text-black">Total Amount</span>
-            <span className="text-3xl font-bold gradient-text print:text-black">
+            <span className="text-3xl font-bold gradient-text print:text-black print:text-2xl">
               ₹{order?.totalAmount}
             </span>
           </div>
@@ -192,22 +238,22 @@ Thank you for your order!
           transition={{ delay: 0.5 }}
           className="card-glass border border-white/20 rounded-2xl p-6 mb-8 print:hidden"
         >
-          <h3 className="font-semibold text-white mb-4">What's Next?</h3>
+          <h3 className="font-semibold text-white mb-4">What&apos;s Next?</h3>
           <ol className="space-y-3 text-gray-300">
             <li className="flex gap-3">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
+              <span className="shrink-0 w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
                 1
               </span>
               <span>Your order is being prepared</span>
             </li>
             <li className="flex gap-3">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
+              <span className="shrink-0 w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
                 2
               </span>
-              <span>You'll receive a notification when it's ready</span>
+              <span>You&apos;ll receive a notification when it&apos;s ready</span>
             </li>
             <li className="flex gap-3">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
+              <span className="shrink-0 w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
                 3
               </span>
               <span>Pick up your order and enjoy!</span>

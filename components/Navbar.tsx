@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X, ShoppingCart, LogOut, Home, UtensilsCrossed, Package, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/theme-provider";
 import { motion } from "framer-motion";
@@ -10,25 +10,20 @@ import { motion } from "framer-motion";
 export default function Navbar() {
   const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const themeContext = useTheme();
   const { theme, toggleTheme } = themeContext;
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const userRole = (session?.user as { role?: string } | undefined)?.role;
   const isAdmin = userRole === "admin";
 
   const navLinks = [
     { href: "/", label: "Home", icon: Home },
-    { href: "/menu", label: "Menu", icon: UtensilsCrossed },
-    { href: "/orders", label: "Orders", icon: Package },
+    { href: isAdmin ? "/admin/menu" : "/menu", label: "Menu", icon: UtensilsCrossed },
   ];
 
-  if (isAdmin) {
-    navLinks.push({ href: "/admin", label: "Admin", icon: UtensilsCrossed });
+  // Show Orders link only when a user (or admin) is signed in
+  if (session?.user) {
+    navLinks.push({ href: isAdmin ? "/admin/orders" : "/orders", label: "Orders", icon: Package });
   }
 
   return (

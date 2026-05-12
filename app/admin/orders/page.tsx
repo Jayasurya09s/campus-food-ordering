@@ -16,8 +16,22 @@ export default async function AdminOrdersPage() {
   }
 
   const orders = await prisma.order.findMany({
+    where: {
+      paymentStatus: "Paid"
+    },
     include: {
-      user: true
+      user: true,
+      orderItems: {
+        include: {
+          foodItem: {
+            select: {
+              id: true,
+              name: true,
+              price: true
+            }
+          }
+        }
+      }
     },
     orderBy: {
       createdAt: "desc"
@@ -33,7 +47,12 @@ export default async function AdminOrdersPage() {
     user: {
       name: order.user.name,
       email: order.user.email
-    }
+    },
+    orderItems: order.orderItems.map((item) => ({
+      name: item.foodItem.name,
+      quantity: item.quantity,
+      price: item.subtotal
+    }))
   }));
 
   return <AdminOrdersManager initialOrders={initialOrders} />;

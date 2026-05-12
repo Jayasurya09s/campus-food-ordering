@@ -4,12 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { getAppSession } from "@/lib/auth";
 
 const allowedStatuses = [
-  "Pending",
-  "Confirmed",
-  "Preparing",
-  "Out for Delivery",
-  "Delivered"
+  "pending",
+  "confirmed",
+  "preparing",
+  "out for delivery",
+  "delivered"
 ] as const;
+
+type AllowedStatus = (typeof allowedStatuses)[number];
 
 export async function PATCH(req: Request) {
   try {
@@ -31,7 +33,9 @@ export async function PATCH(req: Request) {
       );
     }
 
-    if (!allowedStatuses.includes(body.status)) {
+    const statusLower = body.status.toLowerCase() as AllowedStatus;
+
+    if (!allowedStatuses.includes(statusLower)) {
       return NextResponse.json(
         { error: "Invalid status" },
         { status: 400 }
@@ -43,7 +47,7 @@ export async function PATCH(req: Request) {
         id: body.orderId
       },
       data: {
-        status: body.status
+        status: statusLower
       }
     });
 

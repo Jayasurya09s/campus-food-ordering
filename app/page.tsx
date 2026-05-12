@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap, Lock, ShoppingCart, BarChart3, Database, CreditCard } from "lucide-react";
-import { fadeInUp, staggerContainer, itemVariants } from "@/lib/animations";
+import { staggerContainer, itemVariants } from "@/lib/animations";
 import { SAMPLE_FOODS } from "@/lib/constants";
 
 export default function HomePage() {
@@ -232,7 +232,7 @@ export default function HomePage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {SAMPLE_FOODS.map((food, i) => (
+                {SAMPLE_FOODS.map((food) => (
               <motion.div
                 key={food.id}
                 variants={itemVariants}
