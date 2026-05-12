@@ -1,5 +1,3 @@
-import { prisma } from "@/lib/prisma";
-
 import { NextResponse }
 from "next/server";
 
@@ -7,6 +5,7 @@ import { getAppSession }
 from "@/lib/auth";
 
 export async function GET() {
+  const { prisma } = await import("@/lib/prisma");
 
   const session =
     await getAppSession();
