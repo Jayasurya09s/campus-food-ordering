@@ -1,7 +1,7 @@
 
 # Meghana Food
 
-Live demo: https://campusfooddelivery.vercel.app/
+Live demo: https://meghanafoods.vercel.app/
 
 A full-stack Meghana Food application built for DBMS coursework and practical deployment. The project combines a relational PostgreSQL backend, Prisma ORM, Next.js App Router, secure authentication, cart and order management, Razorpay payments, and admin-side reporting in one workflow-driven system.
 
@@ -219,11 +219,18 @@ The final implementation delivers a working Meghana Food platform with a clear D
 4. Generate the Prisma client with `npm run build` or `npx prisma generate`.
 5. Start the app with `npm run dev`.
 
+## Admin Credentials
+
+Use the following credentials to log in as an admin:
+
+- **Email**: admin@example.com
+- **Password**: admin123
+
 ## Deployment Notes
 
 The project is deployed on Vercel at:
 
-https://campusfooddelivery.vercel.app/
+https://meghanafoods.vercel.app/
 
 For Prisma on Vercel, the build process now regenerates the client before compiling so cached dependencies do not break deployment.
 
@@ -233,4 +240,4 @@ For Prisma on Vercel, the build process now regenerates the client before compil
 2. Next.js documentation: https://nextjs.org/docs
 3. Razorpay documentation: https://razorpay.com/docs/
 4. PostgreSQL documentation: https://www.postgresql.org/docs/
-5. Deployed application: https://campusfooddelivery.vercel.app/
+5. Deployed application: https://meghanafoods.vercel.app/
